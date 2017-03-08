@@ -12058,6 +12058,7 @@ var TodoApp = React.createClass({
   displayName: 'TodoApp',
 
   _handleSearch: function (searchText, showCompleted) {
+    console.log(searchText, showCompleted);
     this.setState({
       showCompleted: showCompleted,
       searchText: searchText.toLowerCase()
@@ -12138,7 +12139,7 @@ var TodoSearch = React.createClass({
   displayName: "TodoSearch",
 
   _handleSearch: function () {
-    var showCompleted = this.refs.showCompleted.value;
+    var showCompleted = this.refs.showCompleted.checked;
     var searchText = this.refs.searchText.value;
 
     this.props.onSearch(searchText, showCompleted);
@@ -12150,7 +12151,7 @@ var TodoSearch = React.createClass({
       React.createElement(
         "div",
         null,
-        React.createElement("input", { type: "search", ref: "searchText", placholder: "Search todos", onChange: this._handleSearch })
+        React.createElement("input", { type: "search", ref: "searchText", placeholder: "Search todos", onChange: this._handleSearch })
       ),
       React.createElement(
         "div",
@@ -12158,7 +12159,7 @@ var TodoSearch = React.createClass({
         React.createElement(
           "label",
           null,
-          React.createElement("input", { type: "checkbox", ref: "showCompleted", onChange: this._handleSearch }),
+          React.createElement("input", { type: "checkbox", ref: "showCompleted", onClick: this._handleSearch }),
           "Show completed todos"
         )
       )
