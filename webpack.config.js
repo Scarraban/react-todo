@@ -21,6 +21,7 @@ var config = {
     alias: {
       applicationStyles: path.resolve(__dirname, 'app/styles/app.scss')
     },
+    modules: ['node_modules', './app/components'],
     extensions: ['.js', '.jsx']
   },
   module: {
