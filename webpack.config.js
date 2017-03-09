@@ -19,7 +19,8 @@ var config = {
   },
   resolve: {
     alias: {
-      applicationStyles: path.resolve(__dirname, 'app/styles/app.scss')
+      applicationStyles: path.resolve(__dirname, 'app/styles/app.scss'),
+      actions: path.resolve(__dirname, 'app/actions/actions.jsx')
     },
     modules: ['node_modules', './app/components', './app/api'],
     extensions: ['.js', '.jsx']
