@@ -21,7 +21,8 @@ var config = {
     alias: {
       applicationStyles: path.resolve(__dirname, 'app/styles/app.scss'),
       actions: path.resolve(__dirname, 'app/actions/actions.jsx'),
-      reducers: path.resolve(__dirname, 'app/reducers/reducers.jsx')
+      reducers: path.resolve(__dirname, 'app/reducers/reducers.jsx'),
+      configureStore: path.resolve(__dirname, 'app/store/configureStore.jsx')
     },
     modules: ['node_modules', './app/components', './app/api'],
     extensions: ['.js', '.jsx']
