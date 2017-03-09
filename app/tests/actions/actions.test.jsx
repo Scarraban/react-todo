@@ -81,17 +81,37 @@ describe('Actions', () => {
     var testTodoRef;
 
     beforeEach((done) => {
-      testTodoRef = firebaseRef.child('todos').push();
+      var todosRef = firebaseRef.child('todos');
+      todosRef.remove().then(() => {
+        testTodoRef = firebaseRef.child('todos').push();
 
-      testTodoRef.set({
-        text: 'Something to do',
-        completed: false,
-        createdAt: 123456
-      }).then(() => done());
+        testTodoRef.set({
+          text: 'Something to do',
+          completed: false,
+          createdAt: 123456
+        })
+      })
+      .then(() => done())
+      .catch(done);;
     });
 
     afterEach((done) => {
       testTodoRef.remove().then(() => done());
+    });
+
+    it('should call startAddTodos and dispatch ADD_TODOS action', (done) => {
+      const store = createMockStore({});
+      const action = actions.startAddTodos();
+
+      store.dispatch(action).then(() => {
+        const mockActions = store.getActions();
+        expect(mockActions[0]).toInclude({
+          type: 'ADD_TODOS'
+        });
+        expect(mockActions[0].todos.length).toEqual(1);
+        expect(mockActions[0].todos[0].text).toEqual('Something to do');
+        done();
+      }, done);
     });
 
     it('should toggle todo and dispatch UPDATE_TODO action', (done) => {
