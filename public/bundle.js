@@ -8601,7 +8601,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTodo", function() { return addTodo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startAddTodo", function() { return startAddTodo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTodos", function() { return addTodos; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleTodo", function() { return toggleTodo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateTodo", function() { return updateTodo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startToggleTodo", function() { return startToggleTodo; });
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 
@@ -8652,10 +8653,25 @@ var addTodos = todos => {
   };
 };
 
-var toggleTodo = id => {
+var updateTodo = (id, updates) => {
   return {
-    type: 'TOGGLE_TODO',
-    id
+    type: 'UPDATE_TODO',
+    id,
+    updates
+  };
+};
+
+var startToggleTodo = (id, completed) => {
+  return (dispatch, getState) => {
+    var todoRef = __WEBPACK_IMPORTED_MODULE_0_app_firebase___["a" /* firebaseRef */].child(`todos/${id}`);
+    var updates = {
+      completed,
+      completedAt: completed ? __WEBPACK_IMPORTED_MODULE_1_moment___default()().unix() : null
+    };
+
+    return todoRef.update(updates).then(() => {
+      dispatch(updateTodo(id, updates));
+    });
   };
 };
 
@@ -27988,7 +28004,7 @@ var Todo = React.createClass({
     return React.createElement(
       'div',
       { className: todoClassName, onClick: () => {
-          dispatch(actions.toggleTodo(id));
+          dispatch(actions.startToggleTodo(id, !completed));
         } },
       React.createElement(
         'div',
@@ -28216,13 +28232,10 @@ var todosReducer = (state = [], action) => {
   switch (action.type) {
     case 'ADD_TODO':
       return [...state, action.todo];
-    case 'TOGGLE_TODO':
+    case 'UPDATE_TODO':
       var todos = state.map(todo => {
         if (todo.id === action.id) {
-          return _extends({}, todo, {
-            completed: !todo.completed,
-            completedAt: !todo.completed ? moment().unix() : undefined
-          });
+          return _extends({}, todo, action.updates);
         } else {
           return todo;
         }
