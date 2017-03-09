@@ -8601,6 +8601,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTodo", function() { return addTodo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startAddTodo", function() { return startAddTodo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTodos", function() { return addTodos; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startAddTodos", function() { return startAddTodos; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateTodo", function() { return updateTodo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startToggleTodo", function() { return startToggleTodo; });
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -8650,6 +8651,24 @@ var addTodos = todos => {
   return {
     type: 'ADD_TODOS',
     todos
+  };
+};
+
+var startAddTodos = () => {
+  return (dispatch, getState) => {
+    var todosRef = __WEBPACK_IMPORTED_MODULE_0_app_firebase___["a" /* firebaseRef */].child('todos');
+    return todosRef.once('value').then(snapshot => {
+      var todos = snapshot.val() || [];
+      var parsedTodos = [];
+
+      Object.keys(todos).forEach(key => {
+        parsedTodos.push(_extends({
+          id: key
+        }, todos[key]));
+      });
+
+      dispatch(addTodos(parsedTodos));
+    });
   };
 };
 
@@ -12855,22 +12874,6 @@ module.exports = getIteratorFn;
 var $ = __webpack_require__(278);
 
 module.exports = {
-  setTodos: function (todos) {
-    if ($.isArray(todos)) {
-      localStorage.setItem('todos', JSON.stringify(todos));
-      return todos;
-    }
-  },
-  getTodos: function () {
-    var stringTodos = localStorage.getItem('todos');
-    var todos = [];
-
-    try {
-      todos = JSON.parse(stringTodos);
-    } catch (e) {}
-
-    return $.isArray(todos) ? todos : [];
-  },
   filterTodos: function (todos, showCompleted, searchText) {
     var filteredTodos = todos;
 
@@ -27899,14 +27902,7 @@ var actions = __webpack_require__(38);
 var store = __webpack_require__(250).configure();
 var TodoAPI = __webpack_require__(78);
 
-store.subscribe(() => {
-  var state = store.getState();
-  console.log('New state', state);
-  TodoAPI.setTodos(state.todos);
-});
-
-var initialTodos = TodoAPI.getTodos();
-store.dispatch(actions.addTodos(initialTodos));
+store.dispatch(actions.startAddTodos());
 
 // LOAD FOUNDATION
 $(document).foundation();
