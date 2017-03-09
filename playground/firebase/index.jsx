@@ -23,22 +23,16 @@ firebaseRef.set({
   }
 });
 
-firebaseRef.child('user').on('value', (snapshot) => {
-  console.log('Got value', snapshot.val());
+var todosRef = firebaseRef.child('todos');
+
+todosRef.on('child_added', (snapshot) => {
+  console.log('child_added', snapshot.key, snapshot.val());
 });
 
-firebaseRef.child('app').update({ name: 'New name' });
-firebaseRef.child('user').update({ name: 'Andy' });
+todosRef.push({
+  text: 'Walk the dog'
+});
 
-// // firebaseRef.child('app').once('value').then((snapshot) => {
-// //   console.log('Got db values', snapshot.key, snapshot.val());
-// // }, (e) => {
-// //   console.log('Failed', e);
-// // });
-//
-// firebaseRef.on('value', (snapshot) => {
-//   console.log('Got value', snapshot.val());
-// });
-// firebaseRef.off();
-//
-// firebaseRef.update({ isRunning: false });
+todosRef.push({
+  text: 'Feed the cat'
+});

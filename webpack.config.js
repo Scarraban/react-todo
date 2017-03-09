@@ -19,6 +19,7 @@ var config = {
   },
   resolve: {
     alias: {
+      app: path.resolve(__dirname, 'app'),
       applicationStyles: path.resolve(__dirname, 'app/styles/app.scss'),
       actions: path.resolve(__dirname, 'app/actions/actions.jsx'),
       reducers: path.resolve(__dirname, 'app/reducers/reducers.jsx'),
