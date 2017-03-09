@@ -8524,6 +8524,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSearchText", function() { return setSearchText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleShowCompleted", function() { return toggleShowCompleted; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTodo", function() { return addTodo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTodos", function() { return addTodos; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toggleTodo", function() { return toggleTodo; });
 var setSearchText = searchText => {
   return {
@@ -8542,6 +8543,13 @@ var addTodo = text => {
   return {
     type: 'ADD_TODO',
     text
+  };
+};
+
+var addTodos = todos => {
+  return {
+    type: 'ADD_TODOS',
+    todos
   };
 };
 
@@ -27802,10 +27810,16 @@ var { Route, Router, IndexRoute, hashHistory } = __webpack_require__(377);
 
 var actions = __webpack_require__(36);
 var store = __webpack_require__(248).configure();
+var TodoAPI = __webpack_require__(77);
 
 store.subscribe(() => {
-  console.log('New state', store.getState());
+  var state = store.getState();
+  console.log('New state', state);
+  TodoAPI.setTodos(state.todos);
 });
+
+var initialTodos = TodoAPI.getTodos();
+store.dispatch(actions.addTodos(initialTodos));
 
 // LOAD FOUNDATION
 $(document).foundation();
@@ -27945,42 +27959,11 @@ var moment = __webpack_require__(0);
 
 
 
-var TodoAPI = __webpack_require__(77);
 
 var TodoApp = React.createClass({
   displayName: 'TodoApp',
 
-  _handleSearch: function (searchText, showCompleted) {
-    this.setState({
-      showCompleted: showCompleted,
-      searchText: searchText.toLowerCase()
-    });
-  },
-  _handleAddTodo: function (text) {
-    this.setState({
-      todos: [...this.state.todos, {
-        id: uuid(),
-        text: text,
-        completed: false,
-        createdAt: moment().unix(),
-        completedAt: undefined
-      }]
-    });
-  },
-  getInitialState: function () {
-    return {
-      todos: TodoAPI.getTodos(),
-      showCompleted: false,
-      searchText: ''
-    };
-  },
-  componentDidUpdate: function () {
-    TodoAPI.setTodos(this.state.todos);
-  },
   render: function () {
-    var { todos, showCompleted, searchText } = this.state;
-    var filteredTodos = TodoAPI.filterTodos(todos, showCompleted, searchText);
-
     return React.createElement(
       'div',
       null,
@@ -27998,9 +27981,9 @@ var TodoApp = React.createClass({
           React.createElement(
             'div',
             { className: 'container' },
-            React.createElement(__WEBPACK_IMPORTED_MODULE_2_TodoSearch__["a" /* default */], { onSearch: this._handleSearch }),
+            React.createElement(__WEBPACK_IMPORTED_MODULE_2_TodoSearch__["a" /* default */], null),
             React.createElement(__WEBPACK_IMPORTED_MODULE_0_TodoList__["a" /* default */], null),
-            React.createElement(__WEBPACK_IMPORTED_MODULE_1_AddTodo__["a" /* default */], { onAddTodo: this._handleAddTodo })
+            React.createElement(__WEBPACK_IMPORTED_MODULE_1_AddTodo__["a" /* default */], null)
           )
         )
       )
@@ -28157,6 +28140,8 @@ var todosReducer = (state = [], action) => {
         }
       });
       return todos;
+    case 'ADD_TODOS':
+      return [...state, ...action.todos];
     default:
       return state;
   }
