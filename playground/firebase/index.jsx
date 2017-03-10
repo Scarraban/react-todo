@@ -1,5 +1,7 @@
 import firebase from 'firebase';
 
+// NEED CONFIG FROM FIREBASE TO USE THIS PLAYGROUND
+
 firebase.initializeApp(config);
 
 var firebaseRef = firebase.database().ref();
