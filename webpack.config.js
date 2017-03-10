@@ -1,7 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 
-var PROD = JSON.parse(process.env.PROD_ENV || '0');
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var config = {
   entry: [
@@ -12,10 +12,20 @@ var config = {
   externals: {
     jquery: 'jQuery'
   },
-  devtool: 'source-map',
+  plugins: [
+    new webpack.ProvidePlugin({
+      '$': 'jquery',
+      'jQuery': 'jquery'
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        warnings: false
+      }
+    })
+  ],
   output: {
     path: __dirname,
-    filename: PROD ? './public/bundle.min.js' : './public/bundle.js'
+    filename: './public/bundle.js'
   },
   resolve: {
     alias: {
@@ -31,7 +41,7 @@ var config = {
   module: {
     loaders: [
       {
-        loader: 'babel-loader?presets[]=es2016&presets[]=react&presets[]=stage-0',
+        loader: 'babel-loader?presets[]=es2015&presets[]=react&presets[]=stage-0',
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/
       },
@@ -46,17 +56,7 @@ var config = {
       }
     ]
   },
-  plugins: PROD !== '0' ? [
-    new webpack.ProvidePlugin({
-      '$': 'jquery',
-      'jQuery': 'jquery'
-    })
-  ] : [
-    new webpack.ProvidePlugin({
-      '$': 'jquery',
-      'jQuery': 'jquery'
-    })
-  ]
+  devtool: process.env.NODE_ENV === 'production' ? undefined : 'source-map'
 };
 
 module.exports = config;
